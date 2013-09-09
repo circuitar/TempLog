@@ -9,13 +9,14 @@ Copyright (c) 2013 Circuitar
 This software is released under the MIT license. See the attached LICENSE file for details.
 */
 #include <Wire.h>
+#include <SPI.h>
 #include <stdio.h>
-#include "Adafruit_MAX31855.h"
+#include "Nanoshield_Thermocouple.h"
 #include "Nanoshield_EEPROM.h"
 #include "Nanoshield_RTC.h"
 
 // Define the temperature sampling interval in milliseconds
-#define SAMPLING_INTERVAL 60000
+#define SAMPLING_INTERVAL 10000
 
 // EEPROM record size in bytes
 #define RECORD_SIZE 9
@@ -23,7 +24,7 @@ This software is released under the MIT license. See the attached LICENSE file f
 // Maximum number of records
 #define MAX_RECORDS 3640
 
-Adafruit_MAX31855 thermocouple(13, 8, 12);
+Nanoshield_Thermocouple thermocouple;
 Nanoshield_EEPROM eeprom(0, 0, 0);
 Nanoshield_RTC rtc;
 unsigned int nextRecord;
@@ -41,6 +42,7 @@ void setup()
   // Initialize EEPROM and RTC
   eeprom.begin();
   rtc.begin();
+  thermocouple.begin();
   
   // Delay to let thermocouple stabilize
   delay(500);
@@ -58,6 +60,7 @@ void setup()
 void loop()
 {
   // Keep saving records to EEPROM and printing the into the serial port
+  thermocouple.read();
   rtc.read();
   saveRecord(
     nextRecord,
@@ -68,8 +71,8 @@ void loop()
     rtc.getWeekday(),
     rtc.getMonth(),
     rtc.getYear(),
-    thermocouple.readInternal(),
-    thermocouple.readCelsius()
+    thermocouple.getInternal(),
+    thermocouple.getExternal()
   );
   printRecord(nextRecord++);
   
