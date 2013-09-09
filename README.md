@@ -13,7 +13,7 @@ There are 3 subdirectories:
 To run this project you will need the following Arduino libraries (all on github):
 - Nanoshield_RTC
 - Nanoshield_EEPROM
-- Adafruit_MAX31855
+- Nanoshield_Thermocouple
 
 ---
 
